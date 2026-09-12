@@ -42,23 +42,22 @@
           "idempotentHint": true
         },
         "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
           "type": "object",
           "properties": {
             "full_name": {
+              "description": "New display name for the profile.",
               "type": "string",
               "minLength": 1,
-              "maxLength": 120,
-              "description": "New display name for the profile."
+              "maxLength": 120
             },
             "avatar_url": {
+              "description": "Absolute https URL of an avatar image.",
               "type": "string",
-              "format": "uri",
               "maxLength": 2048,
-              "description": "Absolute https URL of an avatar image."
+              "format": "uri"
             }
-          },
-          "additionalProperties": false,
-          "$schema": "http://json-schema.org/draft-07/schema#"
+          }
         },
         "outputSchema": null
       },
@@ -72,6 +71,7 @@
           "openWorldHint": false
         },
         "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
           "type": "object",
           "properties": {
             "idea": {
@@ -81,16 +81,14 @@
               "description": "A short description of the product, page, or landing site to design."
             },
             "audience": {
+              "description": "Optional target audience (e.g. 'indie developers', 'HR leaders').",
               "type": "string",
-              "maxLength": 200,
-              "description": "Optional target audience (e.g. 'indie developers', 'HR leaders')."
+              "maxLength": 200
             }
           },
           "required": [
             "idea"
-          ],
-          "additionalProperties": false,
-          "$schema": "http://json-schema.org/draft-07/schema#"
+          ]
         },
         "outputSchema": null
       }
