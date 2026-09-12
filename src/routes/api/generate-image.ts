@@ -78,19 +78,154 @@ const sharedColourSystem = `PREMIUM COLOUR SYSTEM (mandatory)
 - Inline lucide-style SVG icons only. No external images.
 - Before ending, inspect mentally for overlap, clipping, inconsistent edges, missing content, repeated blocks, and text overflow. Fix every issue.`;
 
+type ArtDirection = {
+  name: string;
+  fonts: string;
+  composition: string;
+  navigation: string;
+  surfaces: string;
+  palette: string;
+};
+
+const ART_DIRECTIONS: ArtDirection[] = [
+  {
+    name: "Swiss Signal",
+    fonts: "Sora for display and Work Sans for interface text; assertive scale contrast and strict 8-column alignment",
+    composition: "asymmetric editorial grid, compact information bands, oversized section numbers, and strong left alignment",
+    navigation: "slim rail or top bar with ruled active states and concise labels",
+    surfaces: "mostly unframed content separated by fine rules; use cards only for repeated interactive records",
+    palette: "page background #F5F4F0, elevated surface #FFFFFF, sunken surface #EAE8E1, hairline border #D6D3C9, primary ink #171915, muted ink #62665D, accent #D3432F, accent-tint #F6E4DF, supporting hue #245C53, success #16734B, warning #9B640D, danger #B42318",
+  },
+  {
+    name: "Gallery Nocturne",
+    fonts: "Instrument Serif for expressive display moments and Instrument Sans for precise UI copy",
+    composition: "cinematic negative space, offset content blocks, tall media proportions, and a clear foreground/background rhythm",
+    navigation: "quiet dark navigation with typographic active states; avoid pill navigation",
+    surfaces: "deep layered charcoal planes with warm light surfaces used sparingly for focus",
+    palette: "page background #171817, elevated surface #232522, sunken surface #101110, hairline border #393C37, primary ink #F1F0EA, muted ink #A6AAA1, accent #E6B85C, accent-tint #393326, supporting hue #74A99A, success #61B88A, warning #D6A34A, danger #D96A62",
+  },
+  {
+    name: "Editorial Ledger",
+    fonts: "Libre Baskerville for selected headings and IBM Plex Sans for dense product information",
+    composition: "publication-inspired columns, running labels, summary rails, and sharply ordered content density",
+    navigation: "wide masthead or sectioned sidebar with small uppercase group labels and line indicators",
+    surfaces: "paper-like neutral layers, square section boundaries, selective inset panels, and almost no shadow",
+    palette: "page background #F3F1EB, elevated surface #FBFAF6, sunken surface #E7E3DA, hairline border #D0CBC0, primary ink #20221F, muted ink #676A63, accent #255F73, accent-tint #DFEAED, supporting hue #8E543C, success #287350, warning #996519, danger #A83D35",
+  },
+  {
+    name: "Technical Atelier",
+    fonts: "Space Grotesk for headings, Work Sans for body, and Geist Mono for operational data",
+    composition: "modular workbench layout with purposeful split panes, compact tool rows, anchored utility rails, and visible system logic",
+    navigation: "functional icon-and-label rail with one crisp accent marker and squared search treatment",
+    surfaces: "cool neutral sheets, inset control wells, 4px radii, hairline dividers, and no decorative shadows",
+    palette: "page background #F2F5F5, elevated surface #FCFDFD, sunken surface #E5EBEB, hairline border #CFD8D7, primary ink #16201F, muted ink #5E6D6B, accent #007C72, accent-tint #DCEFED, supporting hue #B15A32, success #18794E, warning #9D690D, danger #B32D2A",
+  },
+  {
+    name: "Soft Brutalist",
+    fonts: "Archivo Black for rare display statements and Hind for highly readable interface text",
+    composition: "bold block hierarchy, unexpected but disciplined scale shifts, thick section anchors, and intentionally direct grouping",
+    navigation: "high-contrast horizontal index or block rail with a visibly selected section",
+    surfaces: "flat tactile panels, 2px key borders, restrained corner radii, and offset accents instead of shadow-heavy cards",
+    palette: "page background #F2F0E8, elevated surface #FFFDF5, sunken surface #E4E0D4, hairline border #BDB8AA, primary ink #20211D, muted ink #66675F, accent #C4472D, accent-tint #F2DDD5, supporting hue #356D78, success #24734F, warning #9C6818, danger #AE302A",
+  },
+  {
+    name: "Nordic Precision",
+    fonts: "Outfit for calm geometric headings and Figtree for effortless reading",
+    composition: "balanced open grid, low visual noise, deliberate asymmetry, broad content measures, and compact control clusters",
+    navigation: "lightweight side navigation or floating-free top navigation with subtle active underlines",
+    surfaces: "crisp white working planes over cool gray, shallow borders, selective color fields, and minimal shadow",
+    palette: "page background #F3F5F4, elevated surface #FFFFFF, sunken surface #E9EDEC, hairline border #D7DEDC, primary ink #17201E, muted ink #66716E, accent #2D6B59, accent-tint #E1ECE8, supporting hue #B45E3E, success #21764F, warning #A06B17, danger #AF3730",
+  },
+  {
+    name: "Metropolitan Journal",
+    fonts: "DM Serif Display for large editorial headings and Fira Sans for compact, confident UI text",
+    composition: "magazine-style lead story hierarchy, side annotations, alternating dense and spacious bands, and strong horizontal rules",
+    navigation: "masthead-inspired top navigation with a compact secondary section index when useful",
+    surfaces: "warm gray canvas with ink-like dividers, bright reading surfaces, and carefully framed feature content",
+    palette: "page background #F5F2EE, elevated surface #FFFDFC, sunken surface #EAE5DF, hairline border #D8D0C8, primary ink #201D1B, muted ink #6C6560, accent #9E3F45, accent-tint #F1DFE0, supporting hue #2D6660, success #26724D, warning #9B6616, danger #A93232",
+  },
+  {
+    name: "Digital Heritage",
+    fonts: "Lora for human, authoritative headlines and Nunito Sans for modern operational clarity",
+    composition: "classic proportion translated into a modern grid, framed focal areas, compact utility strips, and elegant vertical rhythm",
+    navigation: "structured top navigation or narrow rail with serif brand treatment and restrained active color",
+    surfaces: "ink, parchment, and mineral tones balanced with clean utility surfaces; use fine borders and soft depth only where functional",
+    palette: "page background #F1F0EC, elevated surface #FAF9F6, sunken surface #E4E2DC, hairline border #CCC9C0, primary ink #1E2423, muted ink #646B68, accent #37695F, accent-tint #DFEAE6, supporting hue #A55339, success #2B754F, warning #986518, danger #AA3731",
+  },
+  {
+    name: "Cobalt Commerce",
+    fonts: "Urbanist for clean display typography and Epilogue for product details and controls",
+    composition: "confident merchandising grid, strong comparison zones, useful sticky actions, and alternating product/content density",
+    navigation: "compact commerce bar or product rail with direct category hierarchy and non-pill active states",
+    surfaces: "bright neutral fields, lightly tinted utility zones, sharp product frames, and disciplined 6px radii",
+    palette: "page background #F4F5F2, elevated surface #FFFFFF, sunken surface #E9ECE7, hairline border #D6DBD3, primary ink #171D1B, muted ink #626B67, accent #245E9C, accent-tint #E0E9F3, supporting hue #B1543C, success #19734A, warning #9A650E, danger #B12D2A",
+  },
+  {
+    name: "Terracotta Modern",
+    fonts: "Syne for distinctive, controlled headings and Plus Jakarta Sans for polished interface copy",
+    composition: "sculptural asymmetric zones, overlapping grid lines without overlapping content, generous anchors, and compact detail clusters",
+    navigation: "minimal wordmark-led navigation with a strong vertical or underline selection cue",
+    surfaces: "warm white and graphite layers with terracotta reserved for decisive actions and selection",
+    palette: "page background #F6F3EF, elevated surface #FFFEFC, sunken surface #EAE5DF, hairline border #D7D0C8, primary ink #211E1B, muted ink #6A635D, accent #B34F38, accent-tint #F2E0DA, supporting hue #276A63, success #27734F, warning #9C6717, danger #AD332D",
+  },
+  {
+    name: "Clinical Luxe",
+    fonts: "Sora for exact headings and Manrope for calm, accessible body and interface text",
+    composition: "clean diagnostic hierarchy, broad primary workspace, compact contextual rail, and carefully prioritized data density",
+    navigation: "precise low-contrast rail with unmistakable active state and generous touch targets",
+    surfaces: "mineral white planes, sage utility tints, delicate dividers, and one dark anchoring surface",
+    palette: "page background #F2F5F3, elevated surface #FFFFFF, sunken surface #E6ECE8, hairline border #D2DDD7, primary ink #17201D, muted ink #607069, accent #19725F, accent-tint #DDEDE7, supporting hue #94566F, success #18764D, warning #9B6815, danger #AE3430",
+  },
+  {
+    name: "Monochrome Accent",
+    fonts: "Bebas Neue for isolated display statements and Barlow for compact, contemporary interface text",
+    composition: "high-contrast monochrome framework, strong cropping, compact index labels, and one surprising accent-led focal zone",
+    navigation: "graphic black-and-paper navigation with a single accent line; no rounded nav containers",
+    surfaces: "near-monochrome layers with visible structural borders, flat panels, and selective inverted sections",
+    palette: "page background #EFEFED, elevated surface #FAFAF7, sunken surface #E1E1DD, hairline border #C8C9C4, primary ink #191B1A, muted ink #626562, accent #D24B32, accent-tint #F3DFD9, supporting hue #246A70, success #21734B, warning #98630D, danger #AE302B",
+  },
+];
+
+function resolveArtDirection(runId: string, variationIndex?: number) {
+  if (typeof variationIndex === "number" && Number.isInteger(variationIndex)) {
+    const index = ((variationIndex % ART_DIRECTIONS.length) + ART_DIRECTIONS.length) % ART_DIRECTIONS.length;
+    return ART_DIRECTIONS[index];
+  }
+  let hash = 2166136261;
+  for (const char of runId) {
+    hash ^= char.charCodeAt(0);
+    hash = Math.imul(hash, 16777619);
+  }
+  return ART_DIRECTIONS[(hash >>> 0) % ART_DIRECTIONS.length];
+}
+
+function artDirectionPrompt(direction: ArtDirection, runId: string, hasReferences: boolean) {
+  return `RUN-SPECIFIC ART DIRECTION — ${direction.name}
+- Generation identity: ${runId}. Treat this as a fresh visual exploration, never a request to reproduce a prior answer.
+- Typography: ${direction.fonts}.
+- Composition: ${direction.composition}.
+- Navigation: ${direction.navigation}.
+- Surfaces: ${direction.surfaces}.
+- Use this exact palette for this entire run: ${direction.palette}.
+- Distinction must be structural, not merely a color swap. Vary layout geometry, information rhythm, navigation treatment, type scale, surface treatment, and focal hierarchy.
+- Do not fall back to a generic centered hero, predictable three-card row, repeated KPI strip, purple gradient, glassmorphism, or interchangeable SaaS template.
+- Premium means rigorous alignment, specific content, disciplined restraint, refined states, and a memorable composition — not extra decoration.${hasReferences ? "\n- Uploaded references are the strongest visual instruction. Preserve their recognizable composition and use this art direction only to refine unresolved details." : ""}`;
+}
+
 function systemPrompt(kind: PlannedScreen["kind"]) {
   return `${kind === "marketing" ? marketingDesignSystem : appDesignSystem}\n\n${sharedColourSystem}`;
 }
 
-function buildScreenPrompt(prompt: string, screens: PlannedScreen[], screen: PlannedScreen) {
+function buildScreenPrompt(prompt: string, screens: PlannedScreen[], screen: PlannedScreen, direction: ArtDirection, runId: string, hasReferences: boolean) {
   const names = screens.map((item) => item.name).join(", ");
   const identity = inferProductIdentity(prompt);
+  const directionBrief = artDirectionPrompt(direction, runId, hasReferences);
 
   if (screen.kind === "marketing") {
-    return `ORIGINAL BRIEF:\n${prompt}\n\nSITE SYSTEM:\nBrand/person name: ${identity.name}. Accent: ${identity.accent}.\nPALETTE (use these exact hex values, identically on every sibling page): ${identity.palette}.\nThe complete page family is: ${names}. This render is specifically the “${screen.name}” page.\n\nPAGE PURPOSE:\n${screen.focus}\n\nREQUIREMENTS:\n- Render only the ${screen.name} page; do not stack other pages below it.\n- Show the shared top navigation with ${screen.name} active, and the shared footer, so this page visibly belongs to one website.\n- This is a marketing/portfolio website: no dashboard shell, no sidebar, no KPI cards, no data tables.\n- Use realistic, specific content consistent across sibling pages, and honour the exact domain, tone, and sections named in the brief.\n- Make it editorial, confident, and shippable rather than a template.\n\nGenerate the complete HTML now.`;
+    return `ORIGINAL BRIEF:\n${prompt}\n\n${directionBrief}\n\nSITE SYSTEM:\nBrand/person name: ${identity.name}.\nThe complete page family is: ${names}. This render is specifically the “${screen.name}” page.\n\nPAGE PURPOSE:\n${screen.focus}\n\nREQUIREMENTS:\n- Render only the ${screen.name} page; do not stack other pages below it.\n- Show the shared top navigation with ${screen.name} active, and the shared footer, so this page visibly belongs to one website.\n- This is a marketing/portfolio website: no dashboard shell, no sidebar, no KPI cards, no data tables.\n- Use realistic, specific content consistent across sibling pages, and honour the exact domain, tone, and sections named in the brief.\n- Make it editorial, confident, and shippable rather than a template.\n\nGenerate the complete HTML now.`;
   }
 
-  return `ORIGINAL PRODUCT BRIEF:\n${prompt}\n\nPRODUCT SYSTEM:\nProduct name: ${identity.name}. Accent: ${identity.accent}.\nPALETTE (use these exact hex values, identically on every sibling screen): ${identity.palette}.\nSigned-in user: Maya Chen, Product Designer. Workspace: Northstar. Use these values exactly. The complete screen family is: ${names}. This render is specifically the “${screen.name}” screen.\n\nSCREEN PURPOSE:\n${screen.focus}\n\nREQUIREMENTS:\n- Render only ${screen.name}; do not stack other screens below it.\n- Show the full shared navigation with ${screen.name} active so this screen visibly belongs to the complete product.\n- Use realistic content that remains consistent across sibling screens, and honour the exact domain named in the brief.\n- Include every field, control, state, and action from the original brief that belongs on this screen.\n- Make it dense, calm, premium, and shippable rather than a concept mockup.\n- Keep all essential content inside the 1440x960 viewport.\n\nGenerate the complete HTML now.`;
+  return `ORIGINAL PRODUCT BRIEF:\n${prompt}\n\n${directionBrief}\n\nPRODUCT SYSTEM:\nProduct name: ${identity.name}.\nSigned-in user: Maya Chen, Product Designer. Workspace: Northstar. Use these values exactly. The complete screen family is: ${names}. This render is specifically the “${screen.name}” screen.\n\nSCREEN PURPOSE:\n${screen.focus}\n\nREQUIREMENTS:\n- Render only ${screen.name}; do not stack other screens below it.\n- Show the full shared navigation with ${screen.name} active so this screen visibly belongs to the complete product.\n- Use realistic content that remains consistent across sibling screens, and honour the exact domain named in the brief.\n- Include every field, control, state, and action from the original brief that belongs on this screen.\n- Make it dense, calm, premium, and shippable rather than a concept mockup.\n- Keep all essential content inside the 1440x960 viewport.\n\nGenerate the complete HTML now.`;
 }
 
 
@@ -145,8 +280,10 @@ async function streamOneScreen(params: {
   images: string[];
   signal: AbortSignal;
   emit: (event: StreamEvent) => void;
+  direction: ArtDirection;
+  runId: string;
 }) {
-  const { key, prompt, screens, screen, images, signal, emit } = params;
+  const { key, prompt, screens, screen, images, signal, emit, direction, runId } = params;
   emit({ type: "screen-start", screenId: screen.id });
 
   const upstream = await fetch("https://ai.gateway.lovable.dev/v1/responses", {
@@ -166,7 +303,7 @@ async function streamOneScreen(params: {
         {
           role: "user",
           content: [
-            { type: "input_text", text: buildScreenPrompt(prompt, screens, screen) },
+            { type: "input_text", text: buildScreenPrompt(prompt, screens, screen, direction, runId, images.length > 0) },
             ...(images.length > 0
               ? [
                   {
@@ -234,12 +371,23 @@ export const Route = createFileRoute("/api/generate-image")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const body = (await request.json().catch(() => ({}))) as { prompt?: string; images?: unknown };
+        const body = (await request.json().catch(() => ({}))) as {
+          prompt?: string;
+          images?: unknown;
+          runId?: unknown;
+          variationIndex?: unknown;
+        };
         const prompt = (body.prompt ?? "").trim();
         const images = (Array.isArray(body.images) ? body.images : [])
           .filter((value): value is string => typeof value === "string" && value.startsWith("data:image/"))
           .slice(0, 4);
         if (!prompt) return new Response("Missing prompt", { status: 400 });
+
+        const runId = typeof body.runId === "string" && body.runId.trim()
+          ? body.runId.trim().slice(0, 120)
+          : crypto.randomUUID();
+        const variationIndex = typeof body.variationIndex === "number" ? body.variationIndex : undefined;
+        const direction = resolveArtDirection(runId, variationIndex);
 
         const key = process.env['LOVABLE_API_KEY'];
         if (!key) return new Response("Missing LOVABLE_API_KEY", { status: 500 });
@@ -261,7 +409,7 @@ export const Route = createFileRoute("/api/generate-image")({
                 const screen = queue.shift();
                 if (!screen) return;
                 try {
-                  await streamOneScreen({ key, prompt, screens, screen, images, signal: request.signal, emit });
+                  await streamOneScreen({ key, prompt, screens, screen, images, signal: request.signal, emit, direction, runId });
                   completed += 1;
                 } catch (error) {
                   if (request.signal.aborted) return;

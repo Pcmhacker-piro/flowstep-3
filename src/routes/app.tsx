@@ -127,6 +127,10 @@ function AppHome() {
   const resizeState = useRef<{ startX: number; startW: number } | null>(null);
 
   const abortRef = useRef<AbortController | null>(null);
+  // Rotate art directions rather than trusting model randomness. Starting at a
+  // random offset keeps a fresh session surprising; incrementing guarantees
+  // consecutive runs do not reuse the same direction.
+  const variationSequenceRef = useRef(Math.floor(Math.random() * 12));
 
   // Multi-select part-edit mode.
   const [selectMode, setSelectMode] = useState(false);
@@ -954,6 +958,9 @@ function AppHome() {
     let failedCount = 0;
     const controller = new AbortController();
     abortRef.current = controller;
+    const runId = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${uid()}`;
+    const variationIndex = variationSequenceRef.current;
+    variationSequenceRef.current += 1;
 
     try {
       const { data: sessionData } = await supabase.auth.getSession();
@@ -964,7 +971,14 @@ function AppHome() {
           "Content-Type": "application/json",
           ...(bearer ? { Authorization: `Bearer ${bearer}` } : {}),
         },
-        body: JSON.stringify({ prompt: p, level, model, images: refImages.map((r) => r.src) }),
+        body: JSON.stringify({
+          prompt: p,
+          level,
+          model,
+          images: refImages.map((r) => r.src),
+          runId,
+          variationIndex,
+        }),
         signal: controller.signal,
       });
       if (!res.ok || !res.body) {
